@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "flatten-js": "^0.2.17",
+    "gh-pages": "^1.0.0",
     "pixi.js": "^4.6.0",
     "react": "^16.1.0",
     "react-dom": "^16.1.0",
@@ -11,9 +12,12 @@
     "redux": "^3.7.2"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "homepage": "https://alexbol99.github.io/odb-viewer"
 }

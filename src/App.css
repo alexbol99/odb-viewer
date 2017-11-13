@@ -1,5 +1,14 @@
 .App {
   text-align: center;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  /*overflow: hidden;*/
+}
+
+.App-body {
+  display: flex;
+  flex:1 1 auto;
 }
 
 .App-logo {
@@ -9,9 +18,12 @@
 
 .App-header {
   background-color: #222;
-  height: 150px;
-  padding: 20px;
+  /*height: 150px;*/
+  /*padding: 20px;*/
   color: white;
+  display: flex;
+  flex-direction: row;
+  flex: none;
 }
 
 .App-title {
@@ -20,6 +32,110 @@
 
 .App-intro {
   font-size: large;
+}
+
+.App-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.App-layers {
+  /* put the layer list on the left */
+  /*list-style-type:none;*/
+  /* 12em is the width of the columns */
+  flex: 0 0 12em;
+  flex-grow: 0;
+  order: -1;
+  background: rgba(147, 128, 108, 0.1);
+  overflow-y: auto;
+  padding-left: 0px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.App-aside {
+  /* 12em is the width of the columns */
+  flex: 0 0 12em;
+  background: rgba(147, 128, 108, 0.1);
+  display: flex;
+  flex-direction: column;
+  /*height: 100%;*/
+  flex-wrap: wrap;
+}
+
+.Layer {
+  padding: 6px;
+  /*border-bottom: 1px solid black;*/
+  display: flex;
+  flex-direction: row;
+  tab-index: 1;
+  z-index: -1;
+  /*margin-bottom: 2px;*/
+  /*margin-right: 2px;*/
+  /*background-color: aliceblue;*/
+}
+
+/*
+.Layer :hover {
+  background: rgba(147, 128, 115, 0.1);
+}
+*/
+.Layer h4 {
+  margin-top: auto;
+  margin-bottom: auto;
+  text-align: left;
+}
+.Layer-displayed {
+  /*background-color: aquamarine;*/
+}
+
+.Layer-undisplayed {
+  /*background-color: aliceblue;*/
+}
+
+.App-toolbar {
+  background: rgba(147, 128, 108, 0.1);
+  /*padding: 10px;*/
+  text-align: left;
+}
+
+.App-toolbar button {
+  /*width:40px;*/
+  height:40px;
+  padding-left: 12px;
+  padding-right: 12px;
+  /*background-repeat: no-repeat;*/
+  /*background-position-x: center;*/
+  /*background-position-y: center;*/
+  background-size: 100%;
+  background-color: transparent;
+  border: none;
+}
+
+.App-toolbar button:hover {
+  background: rgba(147, 128, 115, 0.1);
+}
+
+.App-toolbar img {
+  height: 20px;
+}
+
+.App-canvas-wrapper {
+  display:flex;
+  flex: 1 1 auto;
+}
+
+.App-canvas {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.App-status-bar {
+  display: flex;
+  flex-direction: row;
+  background: rgba(147, 128, 108, 0.1);
+  align-items: center;
 }
 
 @keyframes App-logo-spin {
