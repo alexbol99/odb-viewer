@@ -57,6 +57,7 @@ const readAsText = (reader, file, stage, layers, dispatch) => {
 
             dispatch({
                 type: ActionTypes.PAN_AND_ZOOM_TO_SHAPE,
+                stage: stage,
                 shape: layer
             })
 

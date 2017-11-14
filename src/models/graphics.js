@@ -92,7 +92,6 @@ Polygon.prototype.graphics = function (graphics, style) {
     // graphics.fill = graphics.beginFill(fill).command;
 
     graphics
-        .clear()
         .lineStyle(strokeStyle, stroke)
         .beginFill(fill);
 

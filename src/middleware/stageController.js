@@ -2,8 +2,9 @@ import * as ActionTypes from '../actions/action-types';
 
 const stageController = ({ getState, dispatch }) => next => action => {
 
-    // let state = getState();
+    let state = getState();
     let stage = action.stage;
+    let renderer = state.app.renderer;
 
     if (stage) {
         switch (action.type) {
@@ -30,6 +31,13 @@ const stageController = ({ getState, dispatch }) => next => action => {
                 let box = action.shape.box;
                 stage.panToCoordinate(center.x, center.y);
                 stage.zoomToLimits(box.xmax - box.xmin, box.ymax - box.ymin);
+
+                let origin = stage.origin;
+                let zoomFactor = stage.zoomFactor*stage.resolution;
+                stage.setTransform(origin.x, origin.y, zoomFactor, -zoomFactor);
+
+                renderer.render(stage);
+                // stage.cacheAsBitmap = true;
                 break;
 
             case ActionTypes.MOUSE_WHEEL_MOVE_ON_STAGE:

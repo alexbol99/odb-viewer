@@ -1,11 +1,13 @@
-import React, {Component} from 'react';
-// import Flatten from 'flatten-js';
-import {ShapeComponent} from '../tools/shapeComponent';
-import {ImageComponent} from "../tools/imageComponent";
+import {Component} from 'react';
+// import {ShapeComponent} from '../tools/shapeComponent';
+// import {ImageComponent} from "../tools/imageComponent";
+import * as PIXI from 'pixi.js';
+import '../models/graphics';
 
 export class LayerComponent extends Component {
     constructor(params) {
         super();
+
         this.state = {
             layer: params.layer,
             color: params.color,
@@ -52,6 +54,43 @@ export class LayerComponent extends Component {
         return equal;
     }
 
+    redrawShape(shape, graphics) {
+        let stage = this.props.stage;
+        let layer = this.props.layer;
+
+        let hovered = shape === this.state.hoveredShape;
+        let selected = shape === this.state.firstMeasuredShape || shape === this.state.secondMeasuredShape;
+
+        let widthOn = this.state.widthOn;
+        let displayVertices = this.state.displayVertices;
+        // let displayLabels = this.state.displayLabels;
+
+        let color = (hovered || selected) ? "black" : layer.color;
+        let fill = (widthOn && !displayVertices) ? layer.color : "white";
+        // let alpha = (hovered || selected) ? 1.0 : 0.6;
+
+        let octColor = Number(`0x${color.substr(1)}`);
+        let octFill = Number(`0x${fill.substr(1)}`);
+
+        shape.geom.graphics(graphics, {
+            stroke: octColor,
+            fill: octFill,
+            radius: 3. / (stage.zoomFactor * stage.resolution)
+        });
+    }
+
+    redraw() {
+        this.props.stage.removeChildren();
+        let graphics = new PIXI.Graphics();
+
+        for (let shape of this.props.layer.shapes) {
+            this.redrawShape(shape, graphics);
+        }
+
+        graphics.alpha = this.props.layer.displayed ? 0.6 : 0.0;
+        this.props.stage.addChild(graphics);
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
         if (this.equalState(nextState)) {
             return false;
@@ -59,7 +98,20 @@ export class LayerComponent extends Component {
         return true;
     }
 
+    componentDidMount() {
+        this.redraw();
+    }
+
+    componentDidUpdate() {
+        this.redraw();
+    }
+
     render() {
+        return null;
+    }
+}
+
+/*
         return (
             this.props.layer.shapes.map((shape, index) => {
                 return shape.geom.uri ? (
@@ -103,6 +155,5 @@ export class LayerComponent extends Component {
                     /> )
                 }
             )
-        )
-    }
-}
+       )
+ */

@@ -106,15 +106,15 @@ export class CanvasComponent extends Component {
 
         let stage = new Stage(this.refs.canvas);
 
-        stage.interactive = true;
-        stage.hitArea = new PIXI.Rectangle(-100000,-100000,200000, 200000);
+        // stage.interactive = true;
+        // stage.hitArea = new PIXI.Rectangle(-100000,-100000,200000, 200000);
 
-        stage.on("mousemove", this.handleMouseMove);
-        stage.on("mousedown", this.handleMouseDown);
-        // stage.on("pointerdown", this.handleMouseDown);
-        // stage.on("touchstart", this.handleMouseDown);
-        stage.on("mouseup", this.handleMouseUp);
-        stage.on("mouseout", this.handleMouseLeave);
+        // stage.on("mousemove", this.handleMouseMove);
+        // stage.on("mousedown", this.handleMouseDown);
+                 // stage.on("pointerdown", this.handleMouseDown);
+                 // stage.on("touchstart", this.handleMouseDown);
+        // stage.on("mouseup", this.handleMouseUp);
+        // stage.on("mouseout", this.handleMouseLeave);
 
         this.refs.canvas.addEventListener("mousewheel", this.handleMouseWheel);
         this.refs.canvas.addEventListener("DOMMouseScroll", this.handleMouseWheelFox);
