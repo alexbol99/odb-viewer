@@ -8,6 +8,8 @@ export class LayerComponent extends Component {
     constructor(params) {
         super();
 
+        this.graphics = null;
+
         this.state = {
             layer: params.layer,
             color: params.color,
@@ -80,7 +82,7 @@ export class LayerComponent extends Component {
     }
 
     redraw() {
-        this.props.stage.removeChildren();
+        this.props.stage.removeChild(this.graphics);
         let graphics = new PIXI.Graphics();
 
         for (let shape of this.props.layer.shapes) {
@@ -88,7 +90,7 @@ export class LayerComponent extends Component {
         }
 
         graphics.alpha = this.props.layer.displayed ? 0.6 : 0.0;
-        this.props.stage.addChild(graphics);
+        this.graphics = this.props.stage.addChild(graphics);
     }
 
     shouldComponentUpdate(nextProps, nextState) {

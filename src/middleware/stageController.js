@@ -2,14 +2,15 @@ import * as ActionTypes from '../actions/action-types';
 
 const stageController = ({ getState, dispatch }) => next => action => {
 
-    let state = getState();
+    // let state = getState();
     let stage = action.stage;
-    let renderer = state.app.renderer;
+    // let renderer = state.app.renderer;
 
     if (stage) {
         switch (action.type) {
             case ActionTypes.STAGE_RESIZED:
                 stage.resize();
+                stage.setHitArea();
                 break;
 
             case ActionTypes.MOUSE_DOWN_ON_STAGE:
@@ -19,6 +20,7 @@ const stageController = ({ getState, dispatch }) => next => action => {
             case ActionTypes.MOUSE_MOVED_ON_STAGE:
                 if (action.dx !== undefined && action.dy !== undefined) {
                     stage.panByMouseMove(action.dx, action.dy);
+                    stage.setHitArea();
                 }
                 break;
 
@@ -31,19 +33,14 @@ const stageController = ({ getState, dispatch }) => next => action => {
                 let box = action.shape.box;
                 stage.panToCoordinate(center.x, center.y);
                 stage.zoomToLimits(box.xmax - box.xmin, box.ymax - box.ymin);
-
-                let origin = stage.origin;
-                let zoomFactor = stage.zoomFactor*stage.resolution;
-                stage.setTransform(origin.x, origin.y, zoomFactor, -zoomFactor);
-
-                renderer.render(stage);
-                // stage.cacheAsBitmap = true;
+                stage.setHitArea();
                 break;
 
             case ActionTypes.MOUSE_WHEEL_MOVE_ON_STAGE:
                 let bIn = action.delta > 0;
                 // stage.zoomByMouse(action.x, action.y, bIn, 1 + Math.abs(action.delta)/100.);
                 stage.zoomByMouse(action.x, action.y, bIn, 1.2);
+                stage.setHitArea();
                 break;
 
             default:

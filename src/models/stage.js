@@ -1,8 +1,6 @@
 /**
  * Created by alexanderbol on 21/04/2017.
  */
-// import createjs from 'easel-js';
-// import * as createjs from '../../public/easeljs-NEXT.combined.js';
 import * as PIXI from 'pixi.js';
 
 import Flatten from 'flatten-js';
@@ -179,5 +177,19 @@ export class Stage extends PIXI.Container {
         let dx = this.canvas.width / 2 - canvasX;
         let dy = this.canvas.height / 2 - canvasY;
         this.panBy(dx, dy);
+    }
+
+    setHitArea() {
+        let xmin = this.C2W_X(0);
+        let ymin = this.C2W_Y(this.canvas.height);
+        let xmax = this.C2W_X(this.canvas.width);
+        let ymax = this.C2W_Y(0);
+
+        this.hitArea = new PIXI.Rectangle(xmin, ymin, xmax - xmin, ymax - ymin);
+    }
+
+    inside(pt) {
+        return pt.x >= 0 && pt.x <= this.canvas.width &&
+            pt.y >= 0 && pt.y <= this.canvas.height
     }
 }
