@@ -19,8 +19,8 @@ export class LayerComponent extends Component {
             hovered: params.hovered,
             selected: params.selected,
             widthOn: params.widthOn,
-            /*origin: params.stage.origin,
-            zoomFactor: params.stage.zoomFactor,*/
+            /*origin: params.stage.origin,*/
+            zoomFactor: params.stage.zoomFactor,
             hoveredShape: params.hoveredShape,
             firstMeasuredShape: params.firstMeasuredShape,
             secondMeasuredShape: params.secondMeasuredShape
@@ -37,8 +37,8 @@ export class LayerComponent extends Component {
             hovered: nextProps.hovered,
             selected: nextProps.selected,
             widthOn: nextProps.widthOn,
-            /*origin: nextProps.stage.origin,
-            zoomFactor: nextProps.stage.zoomFactor,*/
+            /*origin: nextProps.stage.origin,*/
+            zoomFactor: nextProps.stage.zoomFactor,
             hoveredShape: nextProps.hoveredShape,
             firstMeasuredShape: nextProps.firstMeasuredShape,
             secondMeasuredShape: nextProps.secondMeasuredShape
@@ -68,17 +68,43 @@ export class LayerComponent extends Component {
         // let displayLabels = this.state.displayLabels;
 
         let color = (hovered || selected) ? "black" : layer.color;
-        let fill = (widthOn && !displayVertices) ? layer.color : "white";
-        // let alpha = (hovered || selected) ? 1.0 : 0.6;
+        let fillColor = layer.color;
+        let fillAlpha = (widthOn && !displayVertices) ? 1 : 0;
 
         let octColor = Number(`0x${color.substr(1)}`);
-        let octFill = Number(`0x${fill.substr(1)}`);
+        let octFill = Number(`0x${fillColor.substr(1)}`);
 
         shape.geom.graphics(graphics, {
-            stroke: octColor,
+            lineWidth: 1. / (stage.zoomFactor * stage.resolution),
+            lineColor: octColor,
             fill: octFill,
+            fillAlpha: fillAlpha,
             radius: 3. / (stage.zoomFactor * stage.resolution)
         });
+    }
+
+    redrawShapeVertices(shape, graphics) {
+        let stage = this.props.stage;
+        let layer = this.props.layer;
+
+        let vertices = shape.geom.vertices;
+
+        let color = layer.color;
+        let fillColor = layer.color;
+        let fillAlpha = 1;
+
+        let octColor = Number(`0x${color.substr(1)}`);
+        let octFill = Number(`0x${fillColor.substr(1)}`);
+
+        for (let vertex of vertices) {
+            vertex.graphics(graphics, {
+                lineWidth: 1. / (stage.zoomFactor * stage.resolution),
+                lineColor: octColor,
+                fill: octFill,
+                fillAlpha: fillAlpha,
+                radius: 3. / (stage.zoomFactor * stage.resolution)
+            });
+        }
     }
 
     redraw() {
@@ -87,6 +113,12 @@ export class LayerComponent extends Component {
 
         for (let shape of this.props.layer.shapes) {
             this.redrawShape(shape, graphics);
+        }
+
+        if (this.props.displayVertices) {
+            for (let shape of this.props.layer.shapes) {
+                this.redrawShapeVertices(shape, graphics);
+            }
         }
 
         graphics.alpha = this.props.layer.displayed ? 0.6 : 0.0;

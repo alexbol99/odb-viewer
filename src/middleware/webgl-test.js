@@ -35,20 +35,20 @@ const webgl_test = ({ dispatch, getState }) => next => action => {
             stage.width = action.renderer.width;
             stage.height = action.renderer.height;
 
-            let geoms = [point(0,0),
-                point(100,0),
-                point(0,100),
-                point(-100,0),
-                point(0,-100),
-                segment(-100, 0, 100, 0),
-                segment(0, -100, 0, 50),
-                arc(point(50,50),100,0,Math.PI/4,true),
-                circle(point(-50,50), 50)
-            ];
-
-            for (let geom of geoms) {
-                layer.add(geom);
-            }
+            // let geoms = [point(0,0),
+            //     point(100,0),
+            //     point(0,100),
+            //     point(-100,0),
+            //     point(0,-100),
+            //     segment(-100, 0, 100, 0),
+            //     segment(0, -100, 0, 50),
+            //     arc(point(50,50),100,0,Math.PI/4,true),
+            //     circle(point(-50,50), 50)
+            // ];
+            //
+            // for (let geom of geoms) {
+            //     layer.add(geom);
+            // }
 
             // for (let geom of geoms) {
             //     stage.addChild(geom.graphics());
@@ -69,7 +69,7 @@ const webgl_test = ({ dispatch, getState }) => next => action => {
                 segment(1000000,1000000, -1000000, 1000000),
                 segment(-1000000,1000000, -500000, -500000)
             ]);
-            // layer.add(polygon);
+            layer.add(polygon);
 
             // stage.addChild(polygon.graphics());
 

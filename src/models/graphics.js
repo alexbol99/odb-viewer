@@ -8,25 +8,19 @@ let {Point, Segment, Circle, Arc, Polygon} = Flatten;
 
 Point.prototype.graphics = function (graphics, style) {
     let radius = (style && style.radius) ? style.radius : 3;
-    let color = style && style.fill ? style.fill : 0xFF0303;
-    // let graphics = new PIXI.Graphics();
-    // graphics.fill = graphics.beginFill(fill).command;
-    // graphics.circle = graphics.drawCircle(this.x, this.y, radius).command;
+    let fill = style && style.fill ? style.fill : 0xFF0303;
     return graphics
-        .clear()
         .lineStyle(0)
-        .beginFill(color)
+        .beginFill(fill)
         .drawCircle(this.x, this.y, radius)
         .endFill();
 };
 
 Segment.prototype.graphics = function (graphics, style) {
-    // let graphics = new PIXI.Graphics();
-    let strokeStyle = style && style.strokeStyle ? style.strokeStyle : 2;
-    let color = style && style.stroke ? style.stroke : 0;
+    let lineWidth = style && style.lineWidth ? style.lineWidth : 2;
+    let lineColor = style && style.lineColor ? style.lineColor : 0xFF0303;
     return graphics
-        .clear()
-        .lineStyle(strokeStyle, color)
+        .lineStyle(lineWidth, lineColor)
         .moveTo(this.ps.x, this.ps.y)
         .lineTo(this.pe.x, this.pe.y)
 };
@@ -34,24 +28,20 @@ Segment.prototype.graphics = function (graphics, style) {
 Arc.prototype.graphics = function (graphics, style) {
     let startAngle = 2 * Math.PI - this.startAngle;
     let endAngle = 2 * Math.PI - this.endAngle;
-    // let graphics = new PIXI.Graphics();
-    let strokeStyle = style && style.strokeStyle ? style.strokeStyle : 2;
-    let color = style && style.stroke ? style.stroke : 0;
+    let lineWidth = style && style.lineWidth ? style.lineWidth : 2;
+    let lineColor = style && style.lineColor ? style.lineColor : 0xFF0303;
     return graphics
-        .clear()
-        .lineStyle(strokeStyle, color)
+        .lineStyle(lineWidth, lineColor, 1)
         .arc(this.pc.x, this.pc.y, this.r, startAngle, endAngle, this.counterClockwise);
 };
 
 Circle.prototype.graphics = function (graphics, style) {
-    // let graphics = new PIXI.Graphics();
-    let strokeStyle = style && style.strokeStyle ? style.strokeStyle : 2;
-    let color = style && style.stroke ? style.stroke : 0;
-    // graphics.setStrokeStyle(2).beginStroke("black").beginFill("red").drawCircle(pcx, pcy, r);
+    let lineWidth = style && style.lineWidth ? style.lineWidth : 1;
+    let lineColor = style && style.lineColor ? style.lineColor : 0xFF0303;
+    let fillColor = style && style.fill ? style.fill : 0xFF0303;
     return graphics
-        .clear()
-        .lineStyle(strokeStyle, color)
-        .beginFill(color)
+        .lineStyle(lineWidth, lineColor)
+        .beginFill(fillColor)
         .drawCircle(this.pc.x, this.pc.y, this.r)
         .endFill();
 };
@@ -83,17 +73,13 @@ function setGraphicsFace(graphics, face) {
 }
 
 Polygon.prototype.graphics = function (graphics, style) {
-    // let graphics = new PIXI.Graphics();
-    let strokeStyle = style && style.strokeStyle ? style.strokeStyle : 1;
-    let stroke = style && style.stroke ? style.stroke : 0xFF0303;
+    let lineWidth = style && style.lineWidth ? style.lineWidth : 1;
+    let lineColor = style && style.lineColor ? style.lineColor : 0xFF0303;
     let fill = style && style.fill ? style.fill : 0xFF0303;
-    // graphics.setStrokeStyle(strokeStyle,0,0,10,true);
-    // graphics.stroke = graphics.beginStroke(stroke).command;
-    // graphics.fill = graphics.beginFill(fill).command;
+    let fillAlpha = style && style.fillAlpha !== undefined ? style.fillAlpha : 1;
 
-    graphics
-        .lineStyle(strokeStyle, stroke)
-        .beginFill(fill);
+    graphics.beginFill(fill, fillAlpha);
+    graphics.lineStyle(lineWidth, lineColor, 1);
 
     for (let face of this.faces) {
         setGraphicsFace(graphics, face);
