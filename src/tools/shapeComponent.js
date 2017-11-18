@@ -126,11 +126,11 @@ export class ShapeComponent extends Component {
         let color = (this.props.hovered || this.props.selected) ? "black" : this.props.color;
         let alpha = (this.props.hovered || this.props.selected) ? 1.0 : 0.6;
         let widthOn = this.props.widthOn;
-        let fill = (widthOn && !this.props.displayVertices) ? this.props.color : "white";
+        let fill = (widthOn && !this.props.displayVertices) ? this.props.color : undefined;
 
         let stage = this.props.stage;
         let octColor = Number(`0x${color.substr(1)}`);
-        let octFill = Number(`0x${fill.substr(1)}`);
+        let octFill = fill ? Number(`0x${fill.substr(1)}`) : undefined;
 
         // this.graphics.clear();
         if (this.graphics.graphicsData.length === 0) {

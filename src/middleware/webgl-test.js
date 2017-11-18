@@ -35,14 +35,14 @@ const webgl_test = ({ dispatch, getState }) => next => action => {
             stage.width = action.renderer.width;
             stage.height = action.renderer.height;
 
-            // let geoms = [point(0,0),
+            // let geoms = [/*point(0,0),
             //     point(100,0),
             //     point(0,100),
             //     point(-100,0),
-            //     point(0,-100),
+            //     point(0,-100),*/
             //     segment(-100, 0, 100, 0),
             //     segment(0, -100, 0, 50),
-            //     arc(point(50,50),100,0,Math.PI/4,true),
+            //     arc(point(0,0),100,Math.PI/4,3*Math.PI/4,true),
             //     circle(point(-50,50), 50)
             // ];
             //
@@ -50,17 +50,6 @@ const webgl_test = ({ dispatch, getState }) => next => action => {
             //     layer.add(geom);
             // }
 
-            // for (let geom of geoms) {
-            //     stage.addChild(geom.graphics());
-            // }
-
-            // layer.add( new Model(circle(point(50,50), 50)) );
-            //
-            // layer.add( new Model(segment(-100, 0, 100, 0), {}, "segment1"));
-            // layer.add( new Model(segment(0, -100, 0, 50), {}, "segment 2"));
-            //
-            // layer.add( new Model(point(20,20),{},"ABC123") );
-            // layer.add( new Model(point(-50,30),{},"Boom boom") );
 
             let polygon = new Polygon();
             polygon.addFace( [
@@ -70,8 +59,6 @@ const webgl_test = ({ dispatch, getState }) => next => action => {
                 segment(-1000000,1000000, -500000, -500000)
             ]);
             layer.add(polygon);
-
-            // stage.addChild(polygon.graphics());
 
             zoomHome(layer, stage);
             state.layers.push(layer);

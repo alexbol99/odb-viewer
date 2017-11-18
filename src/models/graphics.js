@@ -26,13 +26,14 @@ Segment.prototype.graphics = function (graphics, style) {
 };
 
 Arc.prototype.graphics = function (graphics, style) {
-    let startAngle = 2 * Math.PI - this.startAngle;
-    let endAngle = 2 * Math.PI - this.endAngle;
+    // let startAngle = 2 * Math.PI - this.startAngle;
+    // let endAngle = 2 * Math.PI - this.endAngle;
     let lineWidth = style && style.lineWidth ? style.lineWidth : 2;
     let lineColor = style && style.lineColor ? style.lineColor : 0xFF0303;
     return graphics
-        .lineStyle(lineWidth, lineColor, 1)
-        .arc(this.pc.x, this.pc.y, this.r, startAngle, endAngle, this.counterClockwise);
+        .lineStyle(lineWidth, lineColor)
+        .moveTo(this.start.x, this.start.y)
+        .arc(this.pc.x, this.pc.y, this.r, this.startAngle, this.endAngle, !this.counterClockwise);
 };
 
 Circle.prototype.graphics = function (graphics, style) {
@@ -75,10 +76,10 @@ function setGraphicsFace(graphics, face) {
 Polygon.prototype.graphics = function (graphics, style) {
     let lineWidth = style && style.lineWidth ? style.lineWidth : 1;
     let lineColor = style && style.lineColor ? style.lineColor : 0xFF0303;
-    let fill = style && style.fill ? style.fill : 0xFF0303;
+    let fill = style && style.fill ? style.fill : undefined;   // 0xFF0303;
     let fillAlpha = style && style.fillAlpha !== undefined ? style.fillAlpha : 1;
 
-    graphics.beginFill(fill, fillAlpha);
+    if (fill) graphics.beginFill(fill, fillAlpha);
     graphics.lineStyle(lineWidth, lineColor, 1);
 
     for (let face of this.faces) {

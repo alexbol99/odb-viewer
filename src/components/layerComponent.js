@@ -20,7 +20,7 @@ export class LayerComponent extends Component {
             selected: params.selected,
             widthOn: params.widthOn,
             /*origin: params.stage.origin,*/
-            zoomFactor: params.stage.zoomFactor,
+            /*zoomFactor: params.stage.zoomFactor,*/
             hoveredShape: params.hoveredShape,
             firstMeasuredShape: params.firstMeasuredShape,
             secondMeasuredShape: params.secondMeasuredShape
@@ -38,7 +38,7 @@ export class LayerComponent extends Component {
             selected: nextProps.selected,
             widthOn: nextProps.widthOn,
             /*origin: nextProps.stage.origin,*/
-            zoomFactor: nextProps.stage.zoomFactor,
+            /*zoomFactor: nextProps.stage.zoomFactor,*/
             hoveredShape: nextProps.hoveredShape,
             firstMeasuredShape: nextProps.firstMeasuredShape,
             secondMeasuredShape: nextProps.secondMeasuredShape
@@ -68,14 +68,13 @@ export class LayerComponent extends Component {
         // let displayLabels = this.state.displayLabels;
 
         let color = (hovered || selected) ? "black" : layer.color;
-        let fillColor = layer.color;
+        let fillColor = widthOn ? layer.color : undefined;
         let fillAlpha = (widthOn && !displayVertices) ? 1 : 0;
 
         let octColor = Number(`0x${color.substr(1)}`);
-        let octFill = Number(`0x${fillColor.substr(1)}`);
+        let octFill = fillColor ? Number(`0x${fillColor.substr(1)}`) : undefined;
 
         shape.geom.graphics(graphics, {
-            lineWidth: 1. / (stage.zoomFactor * stage.resolution),
             lineColor: octColor,
             fill: octFill,
             fillAlpha: fillAlpha,
@@ -109,7 +108,8 @@ export class LayerComponent extends Component {
 
     redraw() {
         this.props.stage.removeChild(this.graphics);
-        let graphics = new PIXI.Graphics();
+        let lineMode = !this.state.widthOn;
+        let graphics = new PIXI.Graphics(lineMode);
 
         for (let shape of this.props.layer.shapes) {
             this.redrawShape(shape, graphics);
