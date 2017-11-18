@@ -58,6 +58,9 @@ const webgl_test = ({ dispatch, getState }) => next => action => {
                 segment(1000000,1000000, -1000000, 1000000),
                 segment(-1000000,1000000, -500000, -500000)
             ]);
+            polygon.addFace([
+                circle(point(0,100000), 500000).toArc(true)
+            ]);
             layer.add(polygon);
 
             zoomHome(layer, stage);

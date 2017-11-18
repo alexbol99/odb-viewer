@@ -82,8 +82,13 @@ Polygon.prototype.graphics = function (graphics, style) {
     if (fill) graphics.beginFill(fill, fillAlpha);
     graphics.lineStyle(lineWidth, lineColor, 1);
 
+    let island = true;
     for (let face of this.faces) {
         setGraphicsFace(graphics, face);
+        if (!island && fill) {
+            graphics.addHole();
+        }
+        island = false;
     }
 
     graphics.endFill();

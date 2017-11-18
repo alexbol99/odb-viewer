@@ -108,8 +108,8 @@ export class LayerComponent extends Component {
 
     redraw() {
         this.props.stage.removeChild(this.graphics);
-        let lineMode = !this.state.widthOn;
-        let graphics = new PIXI.Graphics(lineMode);
+        let nativeLines = !this.state.widthOn;
+        let graphics = new PIXI.Graphics(nativeLines);
 
         for (let shape of this.props.layer.shapes) {
             this.redrawShape(shape, graphics);
