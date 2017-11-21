@@ -28,7 +28,7 @@ const unitsList = [
     }];
 
 const defaultAppState = {
-    title: "ODB Viewer (Demo)",
+    title: "ODB Viewer",
     units: "pixels",
     decimals: 0,
     divisor: 1,

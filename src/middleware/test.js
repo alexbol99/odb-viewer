@@ -1,9 +1,9 @@
 import * as ActionTypes from '../actions/action-types';
 import { Layers } from '../models/layers';
-// import { Model } from "../models/model";
+import { Model } from "../models/model";
 
 import { Parser } from '../models/parser';
-
+import { parseODB } from "../models/parserODB";
 // let {point, arc, segment, circle, Polygon} = Flatten;
 
 function zoomHome(shape, stage) {
@@ -17,7 +17,7 @@ function zoomHome(shape, stage) {
 const demo = ({ dispatch, getState }) => next => action => {
 
     if (action.type === ActionTypes.MAIN_CANVAS_MOUNTED) {
-        if (document.location.href.split('#')[1] === 'test1') {
+        if (document.location.href.split('#')[1] === 'demo') {
             // console.log(document.location.pathname);
             // console.log(getState());
 
@@ -26,17 +26,24 @@ const demo = ({ dispatch, getState }) => next => action => {
             let parser = new Parser();
             let layers = state.layers;
             let layer = Layers.newLayer(stage, layers);
-            layer.name = "test1";
-            layer.title = "test1";
+            layer.name = "features";
+            layer.title = "features";
 
             let xhr = new XMLHttpRequest();
-            xhr.open('GET',process.env.PUBLIC_URL + 'polygon.txt',true);
+            xhr.open('GET',process.env.PUBLIC_URL + '/features',true);
             xhr.onreadystatechange = function(event) {
                 if (this.readyState == 4 && this.status == 200) {
                     let text = this.responseText;
                     // let text = atob(binStr.split(',')[1]);
-                    let polygon = parser.parseToPolygon(text);
-                    layer.add(polygon);
+                    let job = parseODB("features", text);
+
+                    for (let shape of job.shapes) {
+                        let model = new Model(shape, undefined, shape.label);
+                        layer.add(model);
+                    }
+
+                    // let polygon = parser.parseToPolygon(text);
+                    // layer.add(polygon);
 
                     zoomHome(layer, stage);
                     state.layers.push(layer);
