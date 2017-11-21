@@ -12,6 +12,7 @@ export class Layer {
         // cannot define Layer as extension of PlanarSet due to bug in compiler ?
         this.stage = stage;
         this.shapes = [];         // new Flatten.PlanarSet();
+        this.vertices = [];
         this.name = "";
         this.color = "";
         this.title = "";
@@ -80,5 +81,14 @@ export class Layer {
             }
         }
         return this;
+    }
+
+    getVertices() {
+        if (this.vertices.length === 0) {
+            for (let shape of this.shapes) {
+                this.vertices = this.vertices.concat(shape.geom.vertices);
+            }
+        }
+        return this.vertices;
     }
 }

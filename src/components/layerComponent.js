@@ -8,7 +8,8 @@ export class LayerComponent extends Component {
     constructor(params) {
         super();
 
-        this.graphics = null;
+        this.graphics = undefined;
+        this.vertices = undefined;
 
         this.state = {
             layer: params.layer,
@@ -86,8 +87,8 @@ export class LayerComponent extends Component {
         let pointGraphics = new PIXI.Graphics();
         pointGraphics
             .beginFill(fillColor)
-            .drawCircle(100, 100, 50);
-        let rt = PIXI.RenderTexture.create(200, 200);
+            .drawCircle(5, 5, 2.5);
+        let rt = PIXI.RenderTexture.create(10, 10);
         this.props.renderer.render(pointGraphics, rt);
         let sprite = new PIXI.Sprite(rt);
         sprite.anchor.x = 0.5;
@@ -95,53 +96,44 @@ export class LayerComponent extends Component {
         return sprite;
     }
 
-    redrawShapeVertices(shape, graphics) {
-        let stage = this.props.stage;
+    redrawVertices() {
         let layer = this.props.layer;
-
-        let vertices = shape.geom.vertices;
-
-        let color = layer.color;
+        let vertices = layer.getVertices();
         let fillColor = layer.color;
-        let fillAlpha = 1;
-
-        let octColor = Number(`0x${color.substr(1)}`);
         let octFill = Number(`0x${fillColor.substr(1)}`);
+
+        let sprites = new PIXI.particles.ParticleContainer(vertices.length, {
+            scale: true,
+            position: true,
+            rotation: false,
+            uvs: false,
+            alpha: false
+        });
 
         for (let vertex of vertices) {
             let sprite = this.pointSprite(octFill);
-            // sprite.x = vertex.x - 100;
-            // sprite.y = vertex.y - 100;
-            sprite.setTransform(vertex.x,vertex.y,0.1,0.1);
-            this.props.stage.addChild(sprite);
-
-            // vertex.graphics(graphics, {
-            //     lineWidth: 1. / (stage.zoomFactor * stage.resolution),
-            //     lineColor: octColor,
-            //     fill: octFill,
-            //     fillAlpha: fillAlpha,
-            //     radius: 3. / (stage.zoomFactor * stage.resolution)
-            // });
+            sprite.setTransform(vertex.x,vertex.y,1,1);
+            sprites.addChild(sprite);
         }
+        this.sprites = this.props.stage.addChild(sprites);
     }
 
     redraw() {
         this.props.stage.removeChild(this.graphics);
+        this.props.stage.removeChild(this.sprites);
+
         let nativeLines = !this.state.widthOn;
         let graphics = new PIXI.Graphics(nativeLines);
 
         for (let shape of this.props.layer.shapes) {
             this.redrawShape(shape, graphics);
         }
-
-        if (this.props.displayVertices) {
-            for (let shape of this.props.layer.shapes) {
-                this.redrawShapeVertices(shape, graphics);
-            }
-        }
-
         graphics.alpha = this.props.layer.displayed ? 0.6 : 0.0;
         this.graphics = this.props.stage.addChild(graphics);
+
+        if (this.props.displayVertices && this.props.layer.displayed) {
+            this.redrawVertices();
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
