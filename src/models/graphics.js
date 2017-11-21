@@ -5,7 +5,6 @@ import Flatten from 'flatten-js';
 let {Point, Segment, Circle, Arc, Polygon} = Flatten;
 
 /* Provide conversion methods from FlattenJS objects to PIXI Graphics */
-
 Point.prototype.graphics = function (graphics, style) {
     let radius = (style && style.radius) ? style.radius : 3;
     let fill = style && style.fill ? style.fill : 0xFF0303;

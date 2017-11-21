@@ -82,6 +82,19 @@ export class LayerComponent extends Component {
         });
     }
 
+     pointSprite(fillColor) {
+        let pointGraphics = new PIXI.Graphics();
+        pointGraphics
+            .beginFill(fillColor)
+            .drawCircle(100, 100, 50);
+        let rt = PIXI.RenderTexture.create(200, 200);
+        this.props.renderer.render(pointGraphics, rt);
+        let sprite = new PIXI.Sprite(rt);
+        sprite.anchor.x = 0.5;
+        sprite.anchor.y = 0.5;
+        return sprite;
+    }
+
     redrawShapeVertices(shape, graphics) {
         let stage = this.props.stage;
         let layer = this.props.layer;
@@ -96,13 +109,19 @@ export class LayerComponent extends Component {
         let octFill = Number(`0x${fillColor.substr(1)}`);
 
         for (let vertex of vertices) {
-            vertex.graphics(graphics, {
-                lineWidth: 1. / (stage.zoomFactor * stage.resolution),
-                lineColor: octColor,
-                fill: octFill,
-                fillAlpha: fillAlpha,
-                radius: 3. / (stage.zoomFactor * stage.resolution)
-            });
+            let sprite = this.pointSprite(octFill);
+            // sprite.x = vertex.x - 100;
+            // sprite.y = vertex.y - 100;
+            sprite.setTransform(vertex.x,vertex.y,0.1,0.1);
+            this.props.stage.addChild(sprite);
+
+            // vertex.graphics(graphics, {
+            //     lineWidth: 1. / (stage.zoomFactor * stage.resolution),
+            //     lineColor: octColor,
+            //     fill: octFill,
+            //     fillAlpha: fillAlpha,
+            //     radius: 3. / (stage.zoomFactor * stage.resolution)
+            // });
         }
     }
 

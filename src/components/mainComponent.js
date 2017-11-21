@@ -4,7 +4,7 @@
 
 import React, {Component} from 'react';
 import '../App.css';
-
+import * as PIXI from 'pixi.js';
 import {ToolbarComponent} from './toolbarComponent';
 import {CanvasComponent} from './canvasComponent';
 import {StatusComponent} from './statusComponent';
@@ -224,6 +224,14 @@ export class MainComponent extends Component {
             let origin = this.state.stage.origin;
             let zoomFactor = this.state.stage.zoomFactor*this.state.stage.resolution;
 
+            for (let child of this.state.stage.children) {
+                if (child instanceof PIXI.Sprite) {
+                    let p = child.transform.position;
+                    child.setTransform(p.x, p.y, 0.05/zoomFactor, 0.05/zoomFactor);
+                    // child.transform.localTransform.a = 2. / zoomFactor;
+                    // child.transform.localTransform.d = 2. / zoomFactor;
+                }
+            }
             this.state.stage.setTransform(origin.x, origin.y, zoomFactor, -zoomFactor);
 
             this.state.app.renderer.render(this.state.stage);
@@ -261,6 +269,7 @@ export class MainComponent extends Component {
                     <LayerComponent
                         key={layer.name}
                         stage={this.state.stage}
+                        renderer={this.state.app.renderer}
                         layer={layer}
                         color={layer.color}
                         displayed={layer.displayed}
