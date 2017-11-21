@@ -49471,7 +49471,7 @@ stage.zoomByMouse(action.x,action.y,bIn,1.2);stage.setHitArea();break;default:br
 // let {point, arc, segment, circle, Polygon} = Flatten;
 function zoomHome(shape,stage){var box=shape.box;var x=(box.xmin+box.xmax)/2;var y=(box.ymin+box.ymax)/2;stage.panToCoordinate(x,y);stage.zoomToLimits(box.xmax-box.xmin,box.ymax-box.ymin);}var demo=function demo(_ref){var dispatch=_ref.dispatch,getState=_ref.getState;return function(next){return function(action){if(action.type===__WEBPACK_IMPORTED_MODULE_0__actions_action_types__["g" /* MAIN_CANVAS_MOUNTED */]){if(document.location.href.split('#')[1]==='test1'){// console.log(document.location.pathname);
 // console.log(getState());
-var stage=action.stage;var state=getState();var parser=new __WEBPACK_IMPORTED_MODULE_2__models_parser__["a" /* Parser */]();var layers=state.layers;var layer=__WEBPACK_IMPORTED_MODULE_1__models_layers__["a" /* Layers */].newLayer(stage,layers);layer.name="test1";layer.title="test1";var xhr=new XMLHttpRequest();xhr.open('GET',"/odb-viewer"+'polygon.txt',true);xhr.onreadystatechange=function(event){if(this.readyState==4&&this.status==200){var text=this.responseText;// let text = atob(binStr.split(',')[1]);
+var stage=action.stage;var state=getState();var parser=new __WEBPACK_IMPORTED_MODULE_2__models_parser__["a" /* Parser */]();var layers=state.layers;var layer=__WEBPACK_IMPORTED_MODULE_1__models_layers__["a" /* Layers */].newLayer(stage,layers);layer.name="test1";layer.title="test1";var xhr=new XMLHttpRequest();xhr.open('GET',"/odb-viewer"+'/polygon.txt',true);xhr.onreadystatechange=function(event){if(this.readyState==4&&this.status==200){var text=this.responseText;// let text = atob(binStr.split(',')[1]);
 var polygon=parser.parseToPolygon(text);layer.add(polygon);zoomHome(layer,stage);state.layers.push(layer);dispatch({type:__WEBPACK_IMPORTED_MODULE_0__actions_action_types__["s" /* PAN_AND_ZOOM_TO_SHAPE */],stage:stage,shape:layer});}};xhr.send();}}return next(action);};};};/* harmony default export */ __webpack_exports__["a"] = (demo);
 
 /***/ }),
@@ -49547,4 +49547,4 @@ var polygon=new Polygon();polygon.addFace([segment(-500000,-500000,500000,-50000
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=main.fe7099f5.js.map
+//# sourceMappingURL=main.83f60a4e.js.map
