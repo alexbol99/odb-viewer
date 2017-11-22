@@ -83,17 +83,14 @@ export class LayerComponent extends Component {
         });
     }
 
-     pointSprite(fillColor) {
+     pointTexture(fillColor) {
         let pointGraphics = new PIXI.Graphics();
         pointGraphics
             .beginFill(fillColor)
             .drawCircle(5, 5, 2.5);
         let rt = PIXI.RenderTexture.create(10, 10);
         this.props.renderer.render(pointGraphics, rt);
-        let sprite = new PIXI.Sprite(rt);
-        sprite.anchor.x = 0.5;
-        sprite.anchor.y = 0.5;
-        return sprite;
+        return rt;
     }
 
     redrawVertices() {
@@ -110,8 +107,12 @@ export class LayerComponent extends Component {
             alpha: false
         });
 
+        let rt = this.pointTexture(octFill);
+
         for (let vertex of vertices) {
-            let sprite = this.pointSprite(octFill);
+            let sprite = new PIXI.Sprite(rt);
+            sprite.anchor.x = 0.5;
+            sprite.anchor.y = 0.5;
             sprite.setTransform(vertex.x,vertex.y,1,1);
             sprites.addChild(sprite);
         }
