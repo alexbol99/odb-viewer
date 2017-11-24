@@ -2,7 +2,7 @@ import * as ActionTypes from '../actions/action-types';
 import { Layers } from '../models/layers';
 import { Model } from "../models/model";
 
-import { Parser } from '../models/parser';
+// import { Parser } from '../models/parser';
 import { parseODB } from "../models/parserODB";
 // let {point, arc, segment, circle, Polygon} = Flatten;
 
@@ -23,7 +23,7 @@ const demo = ({ dispatch, getState }) => next => action => {
 
             let stage = action.stage;
             let state = getState();
-            let parser = new Parser();
+            // let parser = new Parser();
             let layers = state.layers;
             let layer = Layers.newLayer(stage, layers);
             layer.name = "features";
@@ -32,7 +32,7 @@ const demo = ({ dispatch, getState }) => next => action => {
             let xhr = new XMLHttpRequest();
             xhr.open('GET',process.env.PUBLIC_URL + '/features',true);
             xhr.onreadystatechange = function(event) {
-                if (this.readyState == 4 && this.status == 200) {
+                if (this.readyState === 4 && this.status === 200) {
                     let text = this.responseText;
                     // let text = atob(binStr.split(',')[1]);
                     let job = parseODB("features", text);

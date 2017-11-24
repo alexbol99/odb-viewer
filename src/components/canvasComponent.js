@@ -18,8 +18,6 @@ export class CanvasComponent extends Component {
         this.handleMouseLeave = this.handleMouseLeave.bind(this);
         this.handleMouseWheel = this.handleMouseWheel.bind(this);
         this.handleMouseWheelFox = this.handleMouseWheelFox.bind(this);
-        this.handleKeyDown = this.handleKeyDown.bind(this);
-        this.handleKeyUp = this.handleKeyUp.bind(this);
     }
 
     handleMouseMove(event) {
@@ -59,43 +57,8 @@ export class CanvasComponent extends Component {
     handleMouseWheelFox(event) {
         event.preventDefault();
         if (event.detail !== 0) {
-            this.props.onMousewheelMove(event.layerX, event.layerY, -event.detail);
+            this.props.onMouseWheelMove(event.layerX, event.layerY, -event.detail);
         }
-    }
-
-    handleKeyDown(e) {
-        // let ctrl = e.ctrlKey;
-        if (e.target.id !== "mainCanvas")
-            return;
-        switch (e.code) {
-            case "KeyH":
-                this.props.onHomeKeyPressed();
-                break;
-
-            case "KeyW":
-                this.props.onToggleWidthModePressed();     // toggle width On/Off in graphics model
-                break;
-
-            case "KeyE":
-                this.props.onToggleDisplayVerticesPressed();  // toggle vertices On/Off
-                break;
-
-            case "ArrowRight":
-                break;
-            case "ArrowLeft":
-                break;
-            case "ArrowUp":
-                break;
-            case "ArrowDown":
-                break;
-            default:
-                break;
-        }
-
-    }
-
-    handleKeyUp(event) {
-
     }
 
     componentDidMount() {
@@ -109,7 +72,6 @@ export class CanvasComponent extends Component {
         let stage = new Stage(this.refs.canvas);
 
         stage.interactive = true;
-        stage.hitArea = new PIXI.Rectangle(-100000,-100000,200000, 200000);
 
         stage.on("mousemove", this.handleMouseMove);
         stage.on("mousedown", this.handleMouseDown);
@@ -121,23 +83,7 @@ export class CanvasComponent extends Component {
         this.refs.canvas.addEventListener("mousewheel", this.handleMouseWheel);
         this.refs.canvas.addEventListener("DOMMouseScroll", this.handleMouseWheelFox);
 
-        // Keyboard event
-        // var _keydown = _.throttle(this.keydown, 100);
-        document.addEventListener('keydown', this.handleKeyDown);
-        // var _keyup = _.throttle(this.keyup, 500);
-        document.addEventListener('keyup', this.handleKeyUp);
-
         this.props.onMainCanvasMounted(renderer, stage);
-    }
-
-    componentDidUpdate() {
-        // if (this.props.stage.canvas && this.props.stage.canvas.getContext('2d')) {
-        // this.props.stage.update();
-        // }
-    }
-
-    componentWillUnmount() {
-
     }
 
     render() {

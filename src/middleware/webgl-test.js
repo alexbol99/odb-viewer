@@ -42,13 +42,13 @@ const webgl_test = ({ dispatch, getState }) => next => action => {
                 point(0,-100),*/
                 segment(-100, 0, 100, 0),
                 segment(0, -100, 0, 50),
-                // arc(point(0,0),100,Math.PI/4,3*Math.PI/4,true),
-                // circle(point(-50,50), 50)
+                arc(point(0,0),100,Math.PI/4,3*Math.PI/4,true),
+                circle(point(-50,50), 50)
             ];
 
-            // for (let geom of geoms) {
-            //     layer.add(geom);
-            // }
+            for (let geom of geoms) {
+                layer.add(geom);
+            }
 
 
             let polygon = new Polygon();

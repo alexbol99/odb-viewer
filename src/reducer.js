@@ -47,7 +47,10 @@ const defaultAppState = {
     secondMeasuredLayer: null,
     distance: undefined,
     shortestSegment: null,
-    renderer: null
+    renderer: null,
+    zoomFactor: undefined,
+    originX: undefined,
+    originY: undefined
 };
 
 const defaultMouseState = {
@@ -61,7 +64,22 @@ function app(state = defaultAppState, action) {
     switch (action.type) {
         case ActionTypes.MAIN_CANVAS_MOUNTED:
             return Object.assign({}, state, {
-                renderer: action.renderer
+                renderer: action.renderer,
+                zoomFactor: action.stage.zoomFactor * action.stage.resolution,
+                originX: action.stage.origin.x,
+                originY: action.stage.origin.y
+            });
+        case ActionTypes.MOUSE_WHEEL_MOVE_ON_STAGE:
+        case ActionTypes.PAN_AND_ZOOM_TO_SHAPE:
+            return Object.assign({}, state, {
+                zoomFactor: action.stage.zoomFactor * action.stage.resolution,
+                originX: action.stage.origin.x,
+                originY: action.stage.origin.y
+            });
+        case ActionTypes.MOUSE_MOVED_ON_STAGE:
+            return Object.assign({}, state, {
+                originX: action.stage.origin.x,
+                originY: action.stage.origin.y
             });
         // case ActionTypes.STAGE_UPDATED:
         //     return state;

@@ -4,11 +4,11 @@
 
 import React, {Component} from 'react';
 import '../App.css';
-import * as PIXI from 'pixi.js';
+// import * as PIXI from 'pixi.js';
 import {ToolbarComponent} from './toolbarComponent';
 import {CanvasComponent} from './canvasComponent';
 import {StatusComponent} from './statusComponent';
-import {LayerComponent} from "./layerComponent";
+import {StageComponent} from "./stageComponent";
 
 import * as ActionTypes from '../actions/action-types';
 import {Layers} from '../models/layers';
@@ -43,6 +43,9 @@ export class MainComponent extends Component {
         this.onMeasurePointsButtonPressed = this.onMeasurePointsButtonPressed.bind(this);
         this.onMeasureBetweenShapesButtonPressed = this.onMeasureBetweenShapesButtonPressed.bind(this);
         this.onPanByDragPressed = this.onPanByDragPressed.bind(this);
+
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleKeyUp = this.handleKeyUp.bind(this);
     }
 
     handleMainCanvasMounted(renderer, stage) {
@@ -52,14 +55,6 @@ export class MainComponent extends Component {
             stage: stage
         })
     }
-    // registerStage(stage) {
-    //     // let layer = Layers.newLayer(stage, this.state.layers);
-    //     this.dispatch({
-    //         type: ActionTypes.NEW_STAGE_CREATED,
-    //         stage: stage,
-    //         /*layer: layer*/
-    //     });
-    // }
 
     resizeStage() {
         // alert("resized")
@@ -205,6 +200,42 @@ export class MainComponent extends Component {
         });
     }
 
+    handleKeyDown(e) {
+        // let ctrl = e.ctrlKey;
+        if (e.target.id !== "mainCanvas")
+            return;
+        switch (e.code) {
+            case "KeyH":
+                this.setHomeView();
+                break;
+
+            case "KeyW":
+                this.toggleWidthMode();     // toggle width On/Off in graphics model
+                break;
+
+            case "KeyE":
+                this.toggleDisplayVertices();  // toggle vertices On/Off
+                break;
+
+            case "ArrowRight":
+                break;
+            case "ArrowLeft":
+                break;
+            case "ArrowUp":
+                break;
+            case "ArrowDown":
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    handleKeyUp(event) {
+
+    }
+
+
     componentWillMount() {
         this.dispatch = this.props.store.dispatch;
         this.setState(this.props.store.getState());
@@ -212,12 +243,17 @@ export class MainComponent extends Component {
 
     componentDidMount() {
         window.onresize = this.resizeStage;
+        // Keyboard event
+        // var _keydown = _.throttle(this.keydown, 100);
+        document.addEventListener('keydown', this.handleKeyDown);
+        // var _keyup = _.throttle(this.keyup, 500);
+        document.addEventListener('keyup', this.handleKeyUp);
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState(nextProps.store.getState());
     }
-
+/*
     componentDidUpdate() {
         // if (this.state.stage.canvas && this.state.stage.canvas.getContext('2d')) {
         if (this.state.app.renderer && this.state.stage) {
@@ -237,7 +273,7 @@ export class MainComponent extends Component {
             this.state.app.renderer.render(this.state.stage);
         }
     }
-
+*/
     render() {
         return (
             <main className="App-content">
@@ -259,30 +295,26 @@ export class MainComponent extends Component {
                     onMouseMove={this.handleMouseMove}
                     onMouseUp={this.handleMouseUp}
                     onMouseWheelMove={this.handleMouseWheelMove}
-                    onHomeKeyPressed={this.setHomeView}
-                    onToggleWidthModePressed={this.toggleWidthMode}
-                    onToggleDisplayVerticesPressed={this.toggleDisplayVertices}
                 />
 
-                {this.state.layers.map((layer) =>
-                    <LayerComponent
-                        key={layer.name}
-                        stage={this.state.stage}
-                        renderer={this.state.app.renderer}
-                        layer={layer}
-                        color={layer.color}
-                        displayed={layer.displayed}
-                        displayVertices={this.state.app.displayVertices}
-                        displayLabels={this.state.app.displayLabels}
-                        widthOn={this.state.app.widthOn}
-                        hoveredShape={this.state.app.hoveredShape}
-                        firstMeasuredShape={this.state.app.firstMeasuredShape}
-                        secondMeasuredShape={this.state.app.secondMeasuredShape}
-                        onMouseOver={this.onMouseRollOverShape}
-                        onMouseOut={this.onMouseRollOutShape}
-                        onClick={this.onClickOnShape}
-                    />
-                )}
+                <StageComponent
+                    stage={this.state.stage}
+                    renderer={this.state.app.renderer}
+                    layers={this.state.layers}
+                    displayVertices={this.state.app.displayVertices}
+                    displayLabels={this.state.app.displayLabels}
+                    widthOn={this.state.app.widthOn}
+                    hoveredShape={this.state.app.hoveredShape}
+                    firstMeasuredShape={this.state.app.firstMeasuredShape}
+                    secondMeasuredShape={this.state.app.secondMeasuredShape}
+                    zoomFactor={this.state.app.zoomFactor}
+                    originX={this.state.app.originX}
+                    originY={this.state.app.originY}
+                    onMouseOver={this.onMouseRollOverShape}
+                    onMouseOut={this.onMouseRollOutShape}
+                    onClick={this.onClickOnShape}
+                />
+
 
                 {
                     this.state.app.measurePointsActive ? (
