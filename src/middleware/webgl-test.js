@@ -46,9 +46,9 @@ const webgl_test = ({ dispatch, getState }) => next => action => {
                 circle(point(-50,50), 50)
             ];
 
-            for (let geom of geoms) {
-                layer.add(geom);
-            }
+            // for (let geom of geoms) {
+            //     layer.add(geom);
+            // }
 
 
             let polygon = new Polygon();

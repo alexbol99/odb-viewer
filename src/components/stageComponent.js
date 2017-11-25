@@ -16,11 +16,13 @@ export class StageComponent extends Component {
             let origin = this.props.stage.origin;
             let zoomFactor = this.props.stage.zoomFactor*this.props.stage.resolution;
 
-            for (let child of this.props.stage.children) {
-                if (child instanceof PIXI.particles.ParticleContainer) {
-                    for (let sprite of child.children) {
-                        let p = sprite.transform.position;
-                        sprite.setTransform(p.x, p.y, 1./zoomFactor, 1./zoomFactor);
+            for (let layer of this.props.stage.children) {
+                for (let child of layer.children) {
+                    if (child instanceof PIXI.particles.ParticleContainer) {
+                        for (let sprite of child.children) {
+                            let p = sprite.transform.position;
+                            sprite.setTransform(p.x, p.y, 1. / zoomFactor, 1. / zoomFactor);
+                        }
                     }
                 }
             }
@@ -38,8 +40,6 @@ export class StageComponent extends Component {
                     stage={this.props.stage}
                     renderer={this.props.renderer}
                     layer={layer}
-                    color={layer.color}
-                    displayed={layer.displayed}
                     displayVertices={this.props.displayVertices}
                     displayLabels={this.props.displayLabels}
                     widthOn={this.props.widthOn}

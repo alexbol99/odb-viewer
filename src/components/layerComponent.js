@@ -8,8 +8,14 @@ import Utils from "../utils";
 export class LayerComponent extends Component {
     constructor(params) {
         super();
+
+        let container = new PIXI.Container();
+        this.container = params.stage.addChild(container);
+
         this.graphics = undefined;
         this.vertices = undefined;
+        this.oldProps = undefined;
+        this.oldWidthOn = undefined;
     }
 
     redrawShape(shape, graphics) {
@@ -49,6 +55,8 @@ export class LayerComponent extends Component {
     }
 
     redrawVertices() {
+        this.container.removeChild(this.vertices);
+
         let layer = this.props.layer;
         let vertices = layer.getVertices();
         let fillColor = layer.color;
@@ -71,12 +79,11 @@ export class LayerComponent extends Component {
             sprite.setTransform(vertex.x,vertex.y,1,1);
             sprites.addChild(sprite);
         }
-        this.sprites = this.props.stage.addChild(sprites);
+        this.vertices = this.container.addChild(sprites);
     }
 
     redraw() {
-        this.props.stage.removeChild(this.graphics);
-        this.props.stage.removeChild(this.sprites);
+        this.container.removeChild(this.graphics);
 
         let nativeLines = !this.props.widthOn;
         let graphics = new PIXI.Graphics(nativeLines);
@@ -85,11 +92,74 @@ export class LayerComponent extends Component {
             this.redrawShape(shape, graphics);
         }
         graphics.alpha = this.props.layer.displayed ? 0.6 : 0.0;
-        this.graphics = this.props.stage.addChild(graphics);
+        this.graphics = this.container.addChild(graphics);
 
         if (this.props.displayVertices && this.props.layer.displayed) {
             this.redrawVertices();
         }
+    }
+
+    updateFillColor(color) {
+        let octFill = Number(`0x${color.substr(1)}`);
+        for (let data of this.graphics.graphicsData) {
+            data.fillColor = octFill;
+            data.lineColor = octFill;
+        }
+        this.graphics.dirty++;
+        this.graphics.clearDirty++;
+    }
+
+    display() {
+        if (this.props.layer.color !== this.props.layer.oldColor) {
+            this.redraw();
+            // this.updateFillColor(this.props.layer.color);
+        }
+        this.container.visible = true;
+    }
+
+    undisplay() {
+        this.container.visible = false;
+    }
+
+    toggleWidth() {
+        if (!this.props.layer.displayed)
+            return;
+        this.redraw();
+    }
+
+    widthOn() {
+        if (!this.props.layer.displayed)
+            return;
+        if (this.oldProps.widthOn !== this.props.widthOn ||
+        this.oldWidthOn !== this.props.widthOn) {
+            this.redraw();
+            this.oldWidthOn = this.props.widthOn;
+        }
+        if (this.props.widthOn && this.vertices) {
+            this.vertices.visible = false;
+        }
+    }
+
+    displayVertices() {
+        if (!this.props.layer.displayed)
+            return;
+        if (this.oldProps.widthOn && !this.props.widthOn) {
+            this.redraw();
+        }
+        else if (this.vertices === undefined) {
+            this.redrawVertices();
+        }
+        this.vertices.visible = true;
+    }
+
+    undisplayVertices() {
+        if (this.vertices) {
+            this.vertices.visible = false;
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.oldProps = Object.assign({},this.props);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -104,7 +174,29 @@ export class LayerComponent extends Component {
     }
 
     componentDidUpdate() {
-        this.redraw();
+        if (!this.props.layer.displayed) {
+            this.undisplay();
+            return;
+        }
+        if (!this.oldProps.layer.displayed && this.props.layer.displayed) {
+            this.display();
+        }
+        if (this.oldProps.widthOn !== this.props.widthOn ||
+        this.oldWidthOn !== this.props.widthOn) {
+            this.widthOn();
+            // return;
+        }
+        if (this.props.displayVertices) {
+            this.displayVertices();
+        }
+        else {
+            this.undisplayVertices();
+        }
+
+        // this.pan = !(this.props.originX === nextProps.originX && this.props.originY === nextProps.originY);
+        // this.zoom = this.props.zoomFactor !== nextProps.zoomFactor;
+
+        // this.redraw();
     }
 
     render() {

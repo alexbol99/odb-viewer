@@ -15,6 +15,7 @@ export class Layer {
         this.vertices = [];
         this.name = "";
         this.color = "";
+        this.oldColor = "";
         this.title = "";
         this.displayed = false;
         this.edited = false;
@@ -32,7 +33,7 @@ export class Layer {
         }
         else {
             let geom = shape;
-            let newShape = new Model(geom) // , this.stage);
+            let newShape = new Model(geom); // , this.stage);
             this.shapes.push(newShape);     // add(newShape);
         }
         return this;
@@ -53,10 +54,12 @@ export class Layer {
 
     toggleDisplayed(color) {
         let displayed = !this.displayed;
+        let oldColor = this.displayed ? this.color : this.oldColor;
         return Object.assign(this.clone(),
             {
                 displayed : displayed,
-                color: color
+                color: color,
+                oldColor: oldColor
             });
     }
 
