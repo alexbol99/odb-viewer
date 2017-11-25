@@ -24,6 +24,12 @@ export class StageComponent extends Component {
                             sprite.setTransform(p.x, p.y, 1. / zoomFactor, 1. / zoomFactor);
                         }
                     }
+                    if (child instanceof PIXI.Container) {
+                        for (let text of child.children) {
+                            let p = text.transform.position;
+                            text.setTransform(p.x, p.y, 1. / zoomFactor, -1. / zoomFactor);
+                        }
+                    }
                 }
             }
             this.props.stage.setTransform(origin.x, origin.y, zoomFactor, -zoomFactor);

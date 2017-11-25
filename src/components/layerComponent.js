@@ -14,34 +14,9 @@ export class LayerComponent extends Component {
 
         this.graphics = undefined;
         this.vertices = undefined;
+        this.labels = undefined;
         this.oldProps = undefined;
         this.oldWidthOn = undefined;
-    }
-
-    redrawShape(shape, graphics) {
-        let stage = this.props.stage;
-        let layer = this.props.layer;
-
-        let hovered = shape === this.props.hoveredShape;
-        let selected = shape === this.props.firstMeasuredShape || shape === this.props.secondMeasuredShape;
-
-        let widthOn = this.props.widthOn;
-        let displayVertices = this.props.displayVertices;
-        // let displayLabels = this.state.displayLabels;
-
-        let color = (hovered || selected) ? "black" : layer.color;
-        let fillColor = widthOn ? layer.color : undefined;
-        let fillAlpha = (widthOn && !displayVertices) ? 1 : 0;
-
-        let octColor = Number(`0x${color.substr(1)}`);
-        let octFill = fillColor ? Number(`0x${fillColor.substr(1)}`) : undefined;
-
-        shape.geom.graphics(graphics, {
-            lineColor: octColor,
-            fill: octFill,
-            fillAlpha: fillAlpha,
-            radius: 3. / (stage.zoomFactor * stage.resolution)
-        });
     }
 
      pointTexture(fillColor) {
@@ -82,6 +57,73 @@ export class LayerComponent extends Component {
         this.vertices = this.container.addChild(sprites);
     }
 
+    redrawLabel(shape, labels) {
+
+        if (!shape.label || shape.label === "") return;
+
+        let label = shape.label;
+
+        let stage = this.props.stage;
+
+        let box = shape.geom.box;
+        let point = {x: (box.xmin + box.xmax) / 2, y: (box.ymin + box.ymax) / 2};
+        let dx = 6. / (stage.zoomFactor * stage.resolution);
+        let dy = 4. / (stage.zoomFactor * stage.resolution);
+
+        let style = {
+            fontFamily : 'Arial',
+            fontSize: 16
+        };
+        let labelSprite = new PIXI.Text(label,style);
+
+        let unscale = 1. / (stage.zoomFactor * stage.resolution);
+
+        // let tx = stage.canvas.offsetLeft / (stage.zoomFactor * stage.resolution) + point.x + dx;
+        // let ty = -stage.canvas.offsetTop / (stage.zoomFactor * stage.resolution) + point.y + dy;
+        let tx = point.x + dx;
+        let ty = point.y + dy;
+        labelSprite.setTransform(tx, ty, unscale, -unscale);
+
+        labels.addChild(labelSprite);
+    }
+
+    redrawLabels() {
+        this.container.removeChild(this.labels);
+
+        let labels = new PIXI.Container();
+
+        for (let shape of this.props.layer.shapes) {
+            this.redrawLabel(shape, labels);
+        }
+
+        this.labels = this.container.addChild(labels);
+    }
+
+    redrawShape(shape, graphics) {
+        let stage = this.props.stage;
+        let layer = this.props.layer;
+
+        let hovered = shape === this.props.hoveredShape;
+        let selected = shape === this.props.firstMeasuredShape || shape === this.props.secondMeasuredShape;
+
+        let widthOn = this.props.widthOn;
+        let displayVertices = this.props.displayVertices;
+
+        let color = (hovered || selected) ? "black" : layer.color;
+        let fillColor = widthOn ? layer.color : undefined;
+        let fillAlpha = (widthOn && !displayVertices) ? 1 : 0;
+
+        let octColor = Number(`0x${color.substr(1)}`);
+        let octFill = fillColor ? Number(`0x${fillColor.substr(1)}`) : undefined;
+
+        shape.geom.graphics(graphics, {
+            lineColor: octColor,
+            fill: octFill,
+            fillAlpha: fillAlpha,
+            radius: 3. / (stage.zoomFactor * stage.resolution)
+        });
+    }
+
     redraw() {
         this.container.removeChild(this.graphics);
 
@@ -96,6 +138,9 @@ export class LayerComponent extends Component {
 
         if (this.props.displayVertices && this.props.layer.displayed) {
             this.redrawVertices();
+        }
+        if (this.props.displayLabels && this.props.layer.displayed) {
+            this.redrawLabels();
         }
     }
 
@@ -158,6 +203,21 @@ export class LayerComponent extends Component {
         }
     }
 
+    displayLabels() {
+        if (!this.props.layer.displayed)
+            return;
+        if (this.labels === undefined) {
+            this.redrawVertices();
+        }
+        this.labels.visible = true;
+    }
+
+    undisplayLabels() {
+        if (this.labels) {
+            this.labels.visible = false;
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         this.oldProps = Object.assign({},this.props);
     }
@@ -191,6 +251,12 @@ export class LayerComponent extends Component {
         }
         else {
             this.undisplayVertices();
+        }
+        if (this.props.displayLabels) {
+            this.displayLabels();
+        }
+        else {
+            this.undisplayLabels();
         }
 
         // this.pan = !(this.props.originX === nextProps.originX && this.props.originY === nextProps.originY);

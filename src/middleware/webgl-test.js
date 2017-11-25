@@ -1,7 +1,7 @@
 import Flatten from 'flatten-js';
 import * as ActionTypes from '../actions/action-types';
 import { Layers } from '../models/layers';
-// import { Model } from "../models/model";
+import { Model } from "../models/model";
 
 // import * as PIXI from 'pixi.js';
 import '../models/graphics';
@@ -35,16 +35,21 @@ const webgl_test = ({ dispatch, getState }) => next => action => {
             stage.width = action.renderer.width;
             stage.height = action.renderer.height;
 
-            let geoms = [/*point(0,0),
-                point(100,0),
-                point(0,100),
-                point(-100,0),
-                point(0,-100),*/
-                segment(-100, 0, 100, 0),
-                segment(0, -100, 0, 50),
-                arc(point(0,0),100,Math.PI/4,3*Math.PI/4,true),
-                circle(point(-50,50), 50)
-            ];
+            // let geoms = [/*point(0,0),
+            //     point(100,0),
+            //     point(0,100),
+            //     point(-100,0),
+            //     point(0,-100),*/
+            //     segment(-100, 0, 100, 0),
+            //     segment(0, -100, 0, 50),
+            //     arc(point(0,0),100,Math.PI/4,3*Math.PI/4,true),
+            //     circle(point(-50,50), 50)
+            // ];
+
+            layer.add( new Model(segment(-100, 0, 100, 0), {}, "segment 1"));
+            layer.add( new Model(segment(0, -100, 0, 50), {}, "segment 2"));
+            layer.add( new Model(point(20,20),{},"ABC123") );
+            layer.add( new Model(point(-50,30),{},"Boom boom") );
 
             // for (let geom of geoms) {
             //     layer.add(geom);
@@ -61,7 +66,7 @@ const webgl_test = ({ dispatch, getState }) => next => action => {
             polygon.addFace([
                 circle(point(0,100000), 500000).toArc(true)
             ]);
-            layer.add(polygon);
+            // layer.add(polygon);
 
             zoomHome(layer, stage);
             state.layers.push(layer);
