@@ -17,9 +17,10 @@ export class LayerComponent extends Component {
         this.labels = undefined;
         this.oldProps = undefined;
         this.oldWidthOn = undefined;
+        this.imageLayer = false;
     }
 
-     pointTexture(fillColor) {
+    pointTexture(fillColor) {
         let pointGraphics = new PIXI.Graphics();
         pointGraphics
             .beginFill(fillColor)
@@ -51,7 +52,7 @@ export class LayerComponent extends Component {
             let sprite = new PIXI.Sprite(rt);
             sprite.anchor.x = 0.5;
             sprite.anchor.y = 0.5;
-            sprite.setTransform(vertex.x,vertex.y,1,1);
+            sprite.setTransform(vertex.x, vertex.y, 1, 1);
             sprites.addChild(sprite);
         }
         this.vertices = this.container.addChild(sprites);
@@ -71,10 +72,10 @@ export class LayerComponent extends Component {
         let dy = 4. / (stage.zoomFactor * stage.resolution);
 
         let style = {
-            fontFamily : 'Arial',
+            fontFamily: 'Arial',
             fontSize: 16
         };
-        let labelSprite = new PIXI.Text(label,style);
+        let labelSprite = new PIXI.Text(label, style);
 
         let unscale = 1. / (stage.zoomFactor * stage.resolution);
 
@@ -89,6 +90,11 @@ export class LayerComponent extends Component {
 
     redrawLabels() {
         this.container.removeChild(this.labels);
+
+        let count = this.props.layer.shapes.reduce(
+            ((acc, shape) => acc + (shape.label !== "" ? 1 : 0)), 0
+        );
+        if (count === 0) return;
 
         let labels = new PIXI.Container();
 
@@ -124,7 +130,45 @@ export class LayerComponent extends Component {
         });
     }
 
+    redrawImage(shape) {
+        let stage = this.props.stage;
+        let _container = this.container;
+
+        let img = new Image();
+
+        img.onload = function() {
+            let naturalWidth = img.naturalWidth;
+            let naturalHeight = img.naturalHeight;
+
+            // let texture = new PIXI.BaseTexture(img);
+            let sprite = new PIXI.Sprite.fromImage(shape.geom.uri);
+
+            sprite.alpha = 0.5;
+            sprite.anchor.x = 0.5;
+            sprite.anchor.y = 0.5;
+
+            sprite.x = shape.geom.center.x;
+            sprite.y = shape.geom.center.y;
+
+            let width = shape.geom.width;
+            let ratio = naturalWidth/naturalHeight;
+            let scaleX = width/naturalWidth; // 1. / (stage.zoomFactor * stage.resolution);
+            let scaleY = width/(naturalHeight*ratio);
+
+            let tx = sprite.x = shape.geom.center.x; // stage.canvas.offsetLeft / (stage.zoomFactor * stage.resolution) + point.x + dx;
+            let ty = sprite.y = shape.geom.center.y; // -stage.canvas.offsetTop / (stage.zoomFactor * stage.resolution) + point.y + dy;
+
+            sprite.setTransform(tx, ty, scaleX, -scaleY);
+
+            _container.addChild(sprite);
+        }
+        img.src = shape.geom.uri;
+    }
+
     redraw() {
+        if (this.imageLayer)
+            return;
+
         this.container.removeChild(this.graphics);
 
         let nativeLines = !this.props.widthOn;
@@ -144,15 +188,16 @@ export class LayerComponent extends Component {
         }
     }
 
-    updateFillColor(color) {
-        let octFill = Number(`0x${color.substr(1)}`);
-        for (let data of this.graphics.graphicsData) {
-            data.fillColor = octFill;
-            data.lineColor = octFill;
-        }
-        this.graphics.dirty++;
-        this.graphics.clearDirty++;
-    }
+    // NOT WORKING
+    // updateFillColor(color) {
+    //     let octFill = Number(`0x${color.substr(1)}`);
+    //     for (let data of this.graphics.graphicsData) {
+    //         data.fillColor = octFill;
+    //         data.lineColor = octFill;
+    //     }
+    //     this.graphics.dirty++;
+    //     this.graphics.clearDirty++;
+    // }
 
     display() {
         if (this.props.layer.color !== this.props.layer.oldColor) {
@@ -166,17 +211,12 @@ export class LayerComponent extends Component {
         this.container.visible = false;
     }
 
-    toggleWidth() {
-        if (!this.props.layer.displayed)
-            return;
-        this.redraw();
-    }
-
     widthOn() {
-        if (!this.props.layer.displayed)
+        if (!this.props.layer.displayed || this.imageLayer)
             return;
+
         if (this.oldProps.widthOn !== this.props.widthOn ||
-        this.oldWidthOn !== this.props.widthOn) {
+            this.oldWidthOn !== this.props.widthOn) {
             this.redraw();
             this.oldWidthOn = this.props.widthOn;
         }
@@ -186,7 +226,7 @@ export class LayerComponent extends Component {
     }
 
     displayVertices() {
-        if (!this.props.layer.displayed)
+        if (!this.props.layer.displayed || this.imageLayer)
             return;
         if (this.oldProps.widthOn && !this.props.widthOn) {
             this.redraw();
@@ -207,9 +247,11 @@ export class LayerComponent extends Component {
         if (!this.props.layer.displayed)
             return;
         if (this.labels === undefined) {
-            this.redrawVertices();
+            this.redrawLabels();
         }
-        this.labels.visible = true;
+        if (this.labels) {
+            this.labels.visible = true;
+        }
     }
 
     undisplayLabels() {
@@ -219,7 +261,7 @@ export class LayerComponent extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.oldProps = Object.assign({},this.props);
+        this.oldProps = Object.assign({}, this.props);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -230,7 +272,15 @@ export class LayerComponent extends Component {
     }
 
     componentDidMount() {
-        this.redraw();
+        // Temporary. Only one image per layer Todo
+        if (this.props.layer.shapes[0].geom.uri) {
+            this.redrawImage(this.props.layer.shapes[0]);
+            this.imageLayer = true;
+        }
+        else {
+            this.redraw();
+            this.imageLayer = false;
+        }
     }
 
     componentDidUpdate() {
@@ -242,7 +292,7 @@ export class LayerComponent extends Component {
             this.display();
         }
         if (this.oldProps.widthOn !== this.props.widthOn ||
-        this.oldWidthOn !== this.props.widthOn) {
+            this.oldWidthOn !== this.props.widthOn) {
             this.widthOn();
             // return;
         }

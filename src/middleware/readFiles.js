@@ -1,3 +1,4 @@
+
 import * as ActionTypes from '../actions/action-types';
 import { Layers } from '../models/layers';
 // import { Shape } from '../models/shape';
@@ -69,17 +70,6 @@ const readAsText = (reader, file, stage, layers, dispatch) => {
 
 const readAsImage = (reader, file, stage, layers, dispatch) => {
     reader.addEventListener("load", function () {
-        // let image = {};          // TODO: to be Flatten.Image
-        // image.uri = this.result;
-        // image.center = new Flatten.Point(0,0);
-        // image.width = 2*400000;    // 2 micron
-        // image.box = new Flatten.Box(
-        //     image.center.x - image.width/2,
-        //     image.center.y - image.width/2,
-        //     image.center.x + image.width/2,
-        //     image.center.y + image.width/2,
-        // );
-
         let image = parseImage(file);
         image.uri = this.result;
 
@@ -96,6 +86,7 @@ const readAsImage = (reader, file, stage, layers, dispatch) => {
 
         dispatch({
             type: ActionTypes.PAN_AND_ZOOM_TO_SHAPE,
+            stage: stage,
             shape: layer
         })
 
@@ -111,7 +102,7 @@ const readFile = (file, stage, layers, dispatch) => {
 
     let reader = new FileReader();
 
-    if (file.type.match('text.*') || file.name === "features") {
+    if (file.type.match('text.*') || file.name.match('features*')) {
         readAsText(reader, file, stage, layers, dispatch);
     }
 
